@@ -13,10 +13,11 @@
     "@vueuse/head": "^2.0.0",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
+    "serve": "^14.2.0",
     "swiper": "^11.2.10",
     "vue": "^3.5.17",
-    "vue-router": "^4.5.1",
-    "serve": "^14.2.0"
+    "vue-meta": "^3.0.0-alpha.2",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",

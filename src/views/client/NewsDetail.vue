@@ -14,30 +14,18 @@
                 <h1 class="mb-1" itemprop="headline">{{ newsItem.title }}</h1>
 
                 <div class="text-muted mb-1 text-time color-time">
-                  <i class="bi bi-clock"> </i>  <time
-                    :datetime="newsItem.created_at"
-                    itemprop="datePublished"
-                  >
-                    {{ 
-                    formatKhmerDate(newsItem.created_at) }}
+                  <i class="bi bi-clock"> </i> <time :datetime="newsItem.created_at" itemprop="datePublished">
+                    {{
+                      formatKhmerDate(newsItem.created_at) }}
                   </time>
                 </div>
 
-                <img
-                  :src="newsItem.image"
-                  :alt="newsItem.title"
-                  class="img-fluid mb-1"
-                  itemprop="image"
-                />
+                <img :src="newsItem.image" :alt="newsItem.title" class="img-fluid mb-1" itemprop="image" />
 
-                <div
-                  class="news-content"
-                  itemprop="articleBody"
-                  v-html="newsItem.detail"
-                ></div>
+                <div class="news-content" itemprop="articleBody" v-html="newsItem.detail"></div>
               </article>
-            <Share :newsItem="newsItem" />
-              
+              <Share :newsItem="newsItem" />
+
             </div>
 
             <div v-else class="text-center">
@@ -47,7 +35,7 @@
 
           <aside>
             <Ads />
-            <Facebookpage />
+            <!-- <Facebookpage /> -->
           </aside>
         </div>
       </div>
@@ -58,13 +46,14 @@
 <script setup>
 import Header from '@/components/client/Header.vue'
 import Ads from '@/components/client/Ads.vue'
-import Facebookpage from '@/components/client/Facebookpage.vue'
+// import Facebookpage from '@/components/client/Facebookpage.vue'
 import Share from '@/components/client/Share.vue'
 
-import { onMounted, ref, watch,getCurrentInstance } from 'vue'
+import { onMounted, ref, watch, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useHead } from '@vueuse/head'
+import { useMeta } from 'vue-meta'
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
@@ -88,7 +77,6 @@ const fetchNewsDetail = async (id) => {
     newsItem.value = response.data?.data || null
 
     if (newsItem.value) {
-      // ✅ Set dynamic SEO meta tags
       useHead({
         title: newsItem.value.title,
         meta: [
@@ -116,6 +104,22 @@ const fetchNewsDetail = async (id) => {
   }
 }
 
+// ✅ Use vue-meta to update dynamic meta tags
+watchEffect(() => {
+  if (newsItem.value) {
+    useMeta({
+      title: newsItem.value.title,
+      meta: [
+        { name: 'description', content: newsItem.value.detail?.substring(0, 150) || '' },
+        { property: 'og:title', content: newsItem.value.title },
+        { property: 'og:description', content: newsItem.value.detail?.substring(0, 150) || '' },
+        { property: 'og:image', content: newsItem.value.image },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: window.location.href }
+      ]
+    })
+  }
+})
 // Khmer date formatting
 const formatKhmerDate = (dateString) => {
   const options = {
@@ -146,21 +150,26 @@ watch(() => route.params.id, (newId) => {
   line-height: 1.7;
   font-size: 1rem;
 }
+
 h1 {
   line-height: 2;
   font-size: 1.5rem;
 }
+
 .text-time {
   font-size: 1rem;
 }
+
 article:hover {
   border-radius: unset !important;
   background-color: unset !important;
   overflow: unset !important;
 }
-h1{
-    line-height: unset !important;
+
+h1 {
+  line-height: unset !important;
 }
+
 .section-title {
   margin-bottom: unset !important;
 }
