@@ -49,11 +49,10 @@ import Ads from '@/components/client/Ads.vue'
 // import Facebookpage from '@/components/client/Facebookpage.vue'
 import Share from '@/components/client/Share.vue'
 
-import { onMounted, ref, watch, getCurrentInstance } from 'vue'
+import { onMounted, ref, watch, getCurrentInstance,watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useHead } from '@vueuse/head'
-import { useMeta } from 'vue-meta'
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
@@ -87,7 +86,6 @@ const fetchNewsDetail = async (id) => {
           { property: 'og:type', content: 'article' }
         ]
       })
-
       const correctSlug = slugify(newsItem.value.title)
       if (route.params.slug !== correctSlug) {
         router.replace({
@@ -104,22 +102,7 @@ const fetchNewsDetail = async (id) => {
   }
 }
 
-// ✅ Use vue-meta to update dynamic meta tags
-watchEffect(() => {
-  if (newsItem.value) {
-    useMeta({
-      title: newsItem.value.title,
-      meta: [
-        { name: 'description', content: newsItem.value.detail?.substring(0, 150) || '' },
-        { property: 'og:title', content: newsItem.value.title },
-        { property: 'og:description', content: newsItem.value.detail?.substring(0, 150) || '' },
-        { property: 'og:image', content: newsItem.value.image },
-        { property: 'og:type', content: 'article' },
-        { property: 'og:url', content: window.location.href }
-      ]
-    })
-  }
-})
+
 // Khmer date formatting
 const formatKhmerDate = (dateString) => {
   const options = {
