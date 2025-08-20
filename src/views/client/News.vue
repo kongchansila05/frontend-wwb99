@@ -4,9 +4,9 @@
     <section class="py-3" aria-label="Latest News">
       <div class="container">
         <div class="grid-content">
-          <div>
+          <div class="border-card">
             <header class="bennertitle mb-2">
-              <h1 class="section-title">📰 News</h1>
+              <h1 class="section-title">📰 {{ $t('highlights') }}</h1>
             </header>
             <div>
               <article
@@ -22,7 +22,7 @@
                   <img
                     :src="item.image"
                     :alt="item.title"
-                    class="img-responsive"
+                    class="img-responsive image-height"
                     itemprop="image"
                   />
                 </div>
@@ -32,13 +32,12 @@
                     <div class="small">
                       <ul>
                         <li>
-                          <i class="bi bi-clock"></i>
-                          <time
+                          <i class="bi bi-clock" > </i> <time
                             class="pub-date"
-                            :datetime="item.created_at"
+                            :datetime="item.created_at "
                             itemprop="datePublished"
                           >
-                            {{ formatKhmerDate(item.created_at) }}
+                            {{ formatKhmerDate( item.created_at) }}
                           </time>
                         </li>
                       </ul>
@@ -60,7 +59,7 @@
                   :disabled="currentPage === 1"
                   class="btn btn-sm btn-secondary"
                 >
-                  Prev
+                  {{ $t('prev') }}
                 </button>
                 <button
                   v-for="page in totalPages"
@@ -75,7 +74,7 @@
                   :disabled="currentPage === totalPages"
                   class="btn btn-sm btn-secondary"
                 >
-                  Next
+                  {{ $t('next') }}
                 </button>
               </nav>
               <!-- End Pagination -->
@@ -90,20 +89,20 @@
         </div>
       </div>
     </section>
+    <!-- <Footer /> -->
   </div>
 </template>
 
 <script setup>
 import Header from '@/components/client/Header.vue'
+import Footer from '@/components/client/Footer.vue'
 import Facebookpage from '@/components/client/Facebookpage.vue'
 import Ads from '@/components/client/Ads.vue'
-import { ref, onMounted, watch ,getCurrentInstance} from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-const { proxy } = getCurrentInstance()
-// SEO Head Setup
 import { useHead } from '@vueuse/head'
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 useHead({
   title: 'Latest News | WWB99',
   meta: [
@@ -122,7 +121,7 @@ const perPage = 10
 
 const fetchNews = async () => {
   try {
-    const response = await axios.get(`${proxy.$apiBaseUrl}api/news?page=${currentPage.value}&limit=${perPage}`)
+    const response = await axios.get(`${apiBaseUrl}/api/news?page=${currentPage.value}&limit=${perPage}`)
     const result = response.data
 
     news.value = result.data || []
@@ -149,12 +148,15 @@ const slugify = (text) => {
     .toString()
     .toLowerCase()
     .normalize('NFD')
+    // Remove diacritics but keep Khmer characters
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9 -]/g, '')
+    // Allow Khmer (\u1780–\u17FF), Khmer symbols (\u19E0–\u19FF), English letters, numbers, spaces, and dashes
+    .replace(/[^a-z0-9\u1780-\u17FF\u19E0-\u19FF\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim()
 }
+
 
 const goToDetail = (item) => {
   const slug = slugify(item.title)

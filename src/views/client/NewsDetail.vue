@@ -4,9 +4,9 @@
     <section class="py-3" aria-label="News Article">
       <div class="container">
         <div class="grid-content">
-          <div>
+          <div class="border-card">
             <header class="bennertitle">
-              <h1 class="section-title">📰 News</h1>
+              <h1 class="section-title">📰 {{ $t('highlights') }}</h1>
             </header>
 
             <div v-if="newsItem" itemscope itemtype="https://schema.org/NewsArticle">
@@ -23,69 +23,73 @@
                 <img :src="newsItem.image" :alt="newsItem.title" class="img-fluid mb-1" itemprop="image" />
 
                 <div class="news-content" itemprop="articleBody" v-html="newsItem.detail"></div>
+                <div class="news-content" itemprop="articleBody" v-html="newsItem.content"></div>
               </article>
               <Share :newsItem="newsItem" />
 
             </div>
 
             <div v-else class="text-center">
-              <p>កំពុងដំណើរការ...</p>
+   <p>{{ $t('loading') }}</p>
             </div>
           </div>
 
           <aside>
             <Ads />
-            <!-- <Facebookpage /> -->
+            <Facebookpage />
           </aside>
         </div>
       </div>
     </section>
+    <Footer />
   </div>
 </template>
 
 <script setup>
 import Header from '@/components/client/Header.vue'
+import Footer from '@/components/client/Footer.vue'
 import Ads from '@/components/client/Ads.vue'
-// import Facebookpage from '@/components/client/Facebookpage.vue'
+import Facebookpage from '@/components/client/Facebookpage.vue'
 import Share from '@/components/client/Share.vue'
-
-import { onMounted, ref, watch, getCurrentInstance,watchEffect } from 'vue'
+import { onMounted, ref, watch, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
-import { useHead } from '@vueuse/head'
+// import { useHead } from '@vueuse/head'
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
 const newsItem = ref(null)
-
 const slugify = (text) => {
   return text
     .toString()
     .toLowerCase()
     .normalize('NFD')
+    // Remove diacritics but keep Khmer characters
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9 -]/g, '')
+    // Allow Khmer (\u1780–\u17FF), Khmer symbols (\u19E0–\u19FF), English letters, numbers, spaces, and dashes
+    .replace(/[^a-z0-9\u1780-\u17FF\u19E0-\u19FF\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim()
 }
 
+
 const fetchNewsDetail = async (id) => {
   try {
     const response = await axios.get(`${proxy.$apiBaseUrl}/api/news/getbyid?id=${id}`)
     newsItem.value = response.data?.data || null
-
+    
     if (newsItem.value) {
-      useHead({
-        title: newsItem.value.title,
-        meta: [
-          { name: 'description', content: newsItem.value.detail?.substring(0, 150) || '' },
-          { property: 'og:title', content: newsItem.value.title },
-          { property: 'og:description', content: newsItem.value.detail?.substring(0, 150) || '' },
-          { property: 'og:image', content: newsItem.value.image },
-          { property: 'og:type', content: 'article' }
-        ]
-      })
+      // useHead({
+      //   title: newsItem.value.title,
+      //   meta: [
+      //     { name: 'description', content: newsItem.value.detail?.substring(0, 150) || '' },
+      //     { property: 'og:title', content: newsItem.value.title },
+      //     { property: 'og:description', content: newsItem.value.detail?.substring(0, 150) || '' },
+      //     { property: 'og:image', content: newsItem.value.image },
+      //     { property: 'og:type', content: 'article' }
+      //   ]
+      // })
       const correctSlug = slugify(newsItem.value.title)
       if (route.params.slug !== correctSlug) {
         router.replace({
@@ -101,8 +105,6 @@ const fetchNewsDetail = async (id) => {
     console.error('Error loading news detail:', error)
   }
 }
-
-
 // Khmer date formatting
 const formatKhmerDate = (dateString) => {
   const options = {
@@ -132,6 +134,9 @@ watch(() => route.params.id, (newId) => {
 .news-content {
   line-height: 1.7;
   font-size: 1rem;
+}
+.news-content img{
+  width: 100% !important;
 }
 
 h1 {

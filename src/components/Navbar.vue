@@ -12,8 +12,13 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
           <li class="block-profile">
+            <router-link to="/" class="dropdown-item">
+              <i class="bi bi-browser-chrome"></i> Website
+            </router-link>
+          </li>
+          <li class="block-profile">
             <a class="dropdown-item" @click="handleLogout">
-               <i class="bi bi-box-arrow-right"></i> Logout
+              <i class="bi bi-box-arrow-right"></i> Logout
             </a>
           </li>
         </ul>
@@ -40,6 +45,7 @@
   function handleLogout() {
     localStorage.removeItem('token')
     localStorage.removeItem('username')
+    localStorage.removeItem('permissions')
     router.push('/login')
   }
 </script>
@@ -47,5 +53,8 @@
 .block-profile .dropdown-item{
   cursor: pointer;
 }
-
+.block-profile:hover .dropdown-item{
+    background: #007bff !important;
+    color: white;
+}
 </style>

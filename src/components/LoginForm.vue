@@ -51,18 +51,22 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref ,getCurrentInstance} from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../views/stores/auth'
+
 const router = useRouter()
+const userStore = useAuthStore()
+
 const username = ref('')
 const password = ref('')
 const error = ref('')
 const success = ref('')
 const showPassword = ref(false)
-const { proxy } = getCurrentInstance()
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
@@ -72,21 +76,26 @@ const handleLogin = async () => {
   error.value = ''
   success.value = ''
   try {
-    const response = await axios.post(`${proxy.$apiBaseUrl}api/login`, {
+    const response = await axios.post(`${apiBaseUrl}/api/login`, {
       username: username.value,
       password: password.value,
     })
-    localStorage.setItem('token', response.data.access_token)
-    localStorage.setItem('username', response.data.user.username)
+
+    // ✅ Use store actions instead of localStorage directly
+    userStore.setToken(response.data.access_token)
+    userStore.setUsername(response.data.user.username)
+    userStore.setPermissions(response.data.user.permissions)
+
     success.value = 'Login successful!'
     setTimeout(() => {
-      router.push('/home')
+      router.push('/admin/news')
     }, 1000)
   } catch (err) {
     error.value = 'Invalid credentials'
   }
 }
 </script>
+
 <style scoped>
 .login-wrapper {
   background: url('https://wwb99.news/wp-content/uploads/2021/12/bg4.jpg') no-repeat center center fixed;

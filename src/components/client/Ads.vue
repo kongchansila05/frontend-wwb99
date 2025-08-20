@@ -1,7 +1,5 @@
-
-
 <template>
-<Swiper
+  <Swiper
     :effect="'cube'"
     :grabCursor="true"
     :loop="true"
@@ -15,18 +13,23 @@
     :modules="modules"
     class="mySwiper"
   >
-    <SwiperSlide><img src="https://i.imgur.com/sKLziUq.png" /></SwiperSlide>
-    <SwiperSlide><img src="https://i.imgur.com/Hc7hSoJ.png" /></SwiperSlide>
-    <SwiperSlide><img src="https://i.imgur.com/gQmHKh5.png" /></SwiperSlide>
+    <SwiperSlide
+      v-for="sponsor in sponsors"
+      :key="sponsor.id"
+    >
+      <img :src="sponsor.image_url" :alt="sponsor.name" />
+    </SwiperSlide>
   </Swiper>
 </template>
+
 <script>
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import 'swiper/css/effect-cube';
 import 'swiper/css/pagination';
 
-import { EffectCube, Pagination,Autoplay } from 'swiper/modules';
+import { EffectCube, Pagination, Autoplay } from 'swiper/modules';
+import axios from 'axios';
 
 export default {
   name: 'CubeSlider',
@@ -34,20 +37,34 @@ export default {
     Swiper,
     SwiperSlide
   },
-  setup() {
+  data() {
     return {
-      modules: [EffectCube, Pagination,Autoplay]
+      sponsors: [],
+      modules: [EffectCube, Pagination, Autoplay],
+      apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
     };
+  },
+  async mounted() {
+    try {
+      const { data } = await axios.get(`${this.apiBaseUrl}/api/sponsors_home`);
+      if (data?.data) {
+        this.sponsors = data.data;
+      }
+    } catch (error) {
+      console.error('Failed to load sponsors:', error);
+    }
   }
-}
+};
 </script>
+
 <style scoped>
 .mySwiper {
-    width: 350px;
-    height: 350px;
+  width: 350px;
+  height: 350px;
 }
-.mySwiper img
-{
-    width: 100%;
+.mySwiper img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 </style>

@@ -65,7 +65,6 @@ body {
 
 .news-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   background-color: #333;
   cursor: pointer;
 }
@@ -133,12 +132,12 @@ body {
 .grid-score{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr ;
-  gap: 10px;
+  gap: 15px;
 }
 .grid-4{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 10px;
+  gap: 15px;
 }
 .header {
   position: sticky;
@@ -167,7 +166,12 @@ section{
  font-size: 20px;
  text-transform: uppercase;
 }
-
+.news-content img ,article img{
+  width: 100% !important;
+}
+.modal img ,.modal-body img{
+  width: 100% !important;
+}
 .grid-content {
   display: grid;
   grid-template-columns: 1fr 500px;
@@ -179,7 +183,8 @@ section{
   gap: 15px;
 }
 .post {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+  padding: 10px;
 }
 article.post .title {
     padding-bottom: 0;
@@ -189,7 +194,6 @@ article.post .title {
 
 
 .img-responsive {
-  width: 300px;
   height: 100%;
 }
 .small{
@@ -209,9 +213,12 @@ ul li {
 }
 article:hover {
   cursor: pointer;
-  background-color: #494949;
+  background-color: #181818;
   border-radius: 10px;
   overflow: hidden;
+}
+.post.grid-content-list:hover{
+  box-shadow: 0 0 6px 4px #c1983d;
 }
 .color-time{
   color: #aaa !important;
@@ -240,4 +247,70 @@ article:hover {
 }
 .card-body p{
   font-size: 0.9rem !important;
+}
+.ql-snow .ql-stroke {
+    stroke: #ffffff !important;
+}
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+    fill: #ffffff !important;
+}
+.ql-snow .ql-picker {
+    color: #ffffff !important;
+}
+.ql-snow .ql-picker-options {
+  background-color: #181818 !important;
+}
+/* .table-dark th.title{
+  width: 850px;
+  overflow: hidden;
+} */
+.img-thumbnail {
+    height: 50px !important;
+    width: 100% !important;
+}
+.img-thumbnail-logo {
+    height: 50px !important;
+    width: 50px !important;
+}
+th.title {
+  width: 850px !important;
+  overflow: hidden;
+}
+.title-td {
+  max-width: 840px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-height{
+  height: 9rem !important;
+}
+.text-1-lines{
+  margin-bottom: unset !important;
+}
+.border-card{
+    padding: 10px;
+    box-shadow: 0 0 6px 4px #c1983d;
+    border-radius: 15px 15px 0px 0px;
+}
+.border-shadow{
+    box-shadow: 0 0 6px 4px #c1983d;
+}
+
+.card img {
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+}
+iframe{
+  width: 780px;
+  height: 440px;
 }

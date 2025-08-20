@@ -6,14 +6,14 @@
     <section id="livescore" class="py-3" itemscope itemtype="https://schema.org/SportsEvent">
       <div class="container">
         <header class="d-flex justify-content-between align-items-center">
-          <h1 class="section-title">⚽ Livescore</h1>
-          <a href="#" class="text-gold text-decoration-none text-more">More Livescore</a>
+          <h1 class="section-title">⚽ {{ $t('livescore') }}</h1>
+          <a href="#" class="text-gold text-decoration-none text-more">{{ $t('moreLivescore') }}</a>
         </header>
 
         <div class="row g-3">
           <div class="grid-score">
             <div
-              class="match-card p-3"
+              class="match-card p-3 border-shadow"
               v-for="match in matches"
               :key="match.id"
               itemprop="subEvent"
@@ -62,13 +62,13 @@
     <section class="py-2" itemscope itemtype="https://schema.org/Blog">
       <div class="container">
         <header class="d-flex justify-content-between align-items-center">
-          <h2 class="section-title">📰 News</h2>
+          <h2 class="section-title">📰 {{ $t('news') }}</h2>
           <router-link
             to="/news"
             class="text-gold text-decoration-none text-more"
             exact-active-class="active"
           >
-            More News
+            {{ $t('moreNews') }}
           </router-link>
         </header>
 
@@ -76,8 +76,8 @@
           <article
             v-for="item in news"
             :key="item.id"
-            @click="goToDetail(item)"
-            class="card news-card h-100"
+            @click="goToDetail(item,news-detail)"
+            class="card news-card h-100 border-shadow"
             itemscope
             itemtype="https://schema.org/NewsArticle"
           >
@@ -92,12 +92,14 @@
               <h3 class="card-title text-primary-custom mb-2 text-1-lines" itemprop="headline">
                 {{ item.title }}
               </h3>
-              <p
+              <div class="card-text text-secondary-custom small text-2-lines" itemprop="description" v-html="item.detail"></div>
+              <!-- <p
+              
                 class="card-text text-secondary-custom small text-2-lines"
                 itemprop="description"
               >
                 {{ item.detail }}
-              </p>
+              </p> -->
             </div>
           </article>
         </div>
@@ -108,15 +110,16 @@
     <section id="highlights" class="py-2" itemscope itemtype="https://schema.org/VideoObject">
       <div class="container">
         <header class="d-flex justify-content-between align-items-center mb-2">
-          <h2 class="section-title">🎬 Highlights</h2>
-          <a href="#" class="text-gold text-decoration-none text-more">More Highlights</a>
+          <h2 class="section-title">🎬 {{ $t('highlights') }}</h2>
+          <a href="#" class="text-gold text-decoration-none text-more">{{ $t('moreHighlights') }}</a>
         </header>
 
         <div class="grid-4 g-4">
           <article
             v-for="item in highlights"
             :key="item.id"
-            class="card news-card h-100"
+            @click="goToDetail(item,'highlights-detail')"
+            class="card news-card h-100  border-shadow"
             itemscope
             itemtype="https://schema.org/VideoObject"
           >
@@ -128,32 +131,28 @@
               style="height: 200px; object-fit: cover;"
             />
             <div class="card-body p-3">
-              <h3 class="card-title text-primary-custom mb-2 text-1-lines" itemprop="name">
+              <h3 class="card-title text-primary-custom mb-2 text-2-lines" itemprop="name">
                 {{ item.title }}
               </h3>
-              <p
-                class="card-text text-secondary-custom small text-2-lines"
-                itemprop="description"
-              >
-                {{ item.detail }}
-              </p>
             </div>
           </article>
         </div>
       </div>
     </section>
+    <Footer />
   </div>
 </template>
 
 
 <script setup>
-import { ref, onMounted ,getCurrentInstance} from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import Header from '@/components/client/Header.vue'
+import Footer from '@/components/client/Footer.vue'
 import { useHead } from '@vueuse/head'
-const { proxy } = getCurrentInstance()
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 useHead({
   title: 'Live Football Scores, News & Highlights | WWB99',
   meta: [
@@ -308,8 +307,6 @@ const fetchMatches = async () => {
   const formattedDate = `${year}${month}${day}`
   const Category = 'soccer'
   const encodedTimezone = '+7'
-
-
   try {
     const response = await fetch(
       `https://livescore6.p.rapidapi.com/matches/v2/list-by-date?Category=${Category}&Date=${formattedDate}&Timezone=${encodedTimezone}`,
@@ -358,7 +355,7 @@ const fetchMatches = async () => {
 
 const fetchNews = async () => {
   try {
-    const response = await axios.get(`${proxy.$apiBaseUrl}api/news_home`)
+    const response = await axios.get(`${apiBaseUrl}/api/news_home`)
     if (Array.isArray(response.data)) {
       const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       news.value = sorted
@@ -369,7 +366,7 @@ const fetchNews = async () => {
 }
 const fetchHighlights = async () => {
   try {
-    const response = await axios.get(`${proxy.$apiBaseUrl}api/highlights_home`)
+    const response = await axios.get(`${apiBaseUrl}/api/highlights_home`)
     if (Array.isArray(response.data)) {
       const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       highlights.value = sorted
@@ -384,17 +381,20 @@ const slugify = (text) => {
     .toString()
     .toLowerCase()
     .normalize('NFD')
+    // Remove diacritics but keep Khmer characters
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9 -]/g, '')
+    // Allow Khmer (\u1780–\u17FF), Khmer symbols (\u19E0–\u19FF), English letters, numbers, spaces, and dashes
+    .replace(/[^a-z0-9\u1780-\u17FF\u19E0-\u19FF\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim()
 }
 
+
 // Navigate to detail page
-const goToDetail = (item) => {
+const goToDetail = (item,namepage) => {
   const slug = slugify(item.title)
-  router.push({ name: 'news-detail', params: { id: item.id, slug } })
+  router.push({ name: namepage, params: { id: item.id, slug } })
 }
 onMounted(() => {
   fetchMatches()
