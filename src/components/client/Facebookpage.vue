@@ -3,7 +3,7 @@
     <iframe
       :src="iframeSrc"
       width="100%"
-      height="500"
+      height="300"
       style="border:none;overflow:hidden"
       scrolling="no"
       frameborder="0"
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     iframeSrc() {
-      return `https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(this.pageUrl)}&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true`;
+      return `https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(this.pageUrl)}&tabs=timeline&width=300&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true`;
     }
   }
 }
@@ -34,7 +34,12 @@ export default {
 <style scoped>
 .facebook-page-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 300px;
   margin: auto;
 }
+iframe{
+  width: 300px;
+  height: 500px;
+}
+
 </style>

@@ -6,10 +6,10 @@
     :cubeEffect="{
       shadow: true,
       slideShadows: true,
-      shadowOffset: 20,
+      shadowOffset: 10,
       shadowScale: 0.94,
     }"
-    :autoplay="{ delay: 2000, disableOnInteraction: false }"
+    :autoplay="{ delay: 5000, disableOnInteraction: false }"
     :modules="modules"
     class="mySwiper"
   >
@@ -59,8 +59,8 @@ export default {
 
 <style scoped>
 .mySwiper {
-  width: 350px;
-  height: 350px;
+  width: 300px;
+  height: 300px;
 }
 .mySwiper img {
   width: 100%;

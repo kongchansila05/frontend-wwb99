@@ -76,7 +76,7 @@
           <article
             v-for="item in news"
             :key="item.id"
-            @click="goToDetail(item,news-detail)"
+            @click="goToDetail(item,'news-detail')"
             class="card news-card h-100 border-shadow"
             itemscope
             itemtype="https://schema.org/NewsArticle"

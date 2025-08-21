@@ -136,6 +136,7 @@ const goToDetail = (item) => {
   const slug = slugify(item.title)
   router.push({ name: 'highlights-detail', params: { id: item.id, slug } })
 }
+
 const formatKhmerDate = (dateString) => {
   const options = {
     weekday: 'long',

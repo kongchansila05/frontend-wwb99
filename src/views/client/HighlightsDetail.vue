@@ -53,6 +53,7 @@ import Share from '@/components/client/Share.vue'
 import { onMounted, ref, watch, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 // import { useHead } from '@vueuse/head'
 const { proxy } = getCurrentInstance()
 const route = useRoute()
@@ -75,7 +76,7 @@ const slugify = (text) => {
 
 const fetchHighlightsDetail = async (id) => {
   try {
-    const response = await axios.get(`${proxy.$apiBaseUrl}/api/highlights/getbyid?id=${id}`)
+    const response = await axios.get(`${apiBaseUrl}/api/highlights/getbyid?id=${id}`)
     highlightsItem.value = response.data?.data || null
     
     if (highlightsItem.value) {
